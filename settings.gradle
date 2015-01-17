@@ -1,1 +1,2 @@
 include ':android-view-hover-demo'
+include ':event-bus-demo-kamidox'

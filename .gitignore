@@ -45,3 +45,6 @@ proguard/
 # Other
 .svn
 
+# Iml
+*.iml
+
