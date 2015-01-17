@@ -1,6 +1,8 @@
 package cn.trinea.android.demo.eventbus;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -16,6 +18,18 @@ public class DiffThreadModeActivity extends BaseActivity {
     private Button   sendBtn;
     private TextView receivedEventTV;
 
+    private Handler handler = new Handler() {
+        
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            String newText = bundle.getString("newText");
+            String threadInfo = bundle.getString("threadInfo");
+            receivedEventTV.setText(new StringBuilder(receivedEventTV.getText()).append("\r\n\r\n").append(newText)
+                    .append(threadInfo));
+        }
+    };
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_send_simplest_event);
@@ -62,8 +76,12 @@ public class DiffThreadModeActivity extends BaseActivity {
     private void appendText(String newText) {
         String threadInfo = ", current thread info: id is" + Thread.currentThread().getId() + ", content is "
                 + Thread.currentThread().toString() + "}";
-        receivedEventTV.setText(new StringBuilder(receivedEventTV.getText()).append("\r\n\r\n").append(newText)
-                .append(threadInfo));
+        Message msg = handler.obtainMessage();
+        Bundle bundle = new Bundle();
+        bundle.putString("newText", newText);
+        bundle.putString("threadInfo", threadInfo);
+        msg.setData(bundle);
+        handler.sendMessage(msg);
     }
 
     private void initView() {
